@@ -52,3 +52,30 @@ func TestFindUser_NotExists(t *testing.T) {
 
 	require.Equal(t, easyalert.ErrRecordDoesNotExist, err)
 }
+
+func TestCreateUser(t *testing.T) {
+	db, err := setupDB()
+	require.Nil(t, err)
+
+	defer cleanDB(db)
+
+	repo := postgres.UserRepository{DB: db}
+
+	user := easyalert.User{Email: "test@user.com", PasswordDigest: "1234", Token: "1234", Admin: false}
+
+	user, err = repo.CreateUser(user)
+	require.Nil(t, err)
+
+	var defaultTime time.Time
+
+	require.NotEqual(t, uint(0), user.ID)
+	require.NotEqual(t, defaultTime, user.CreatedAt)
+	require.NotEqual(t, defaultTime, user.UpdatedAt)
+
+	var exists bool
+
+	err = db.QueryRow("SELECT EXISTS(SELECT 1 FROM users WHERE id = $1)", user.ID).Scan(&exists)
+	require.Nil(t, err)
+
+	require.True(t, exists)
+}

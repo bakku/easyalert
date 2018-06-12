@@ -2,7 +2,6 @@ package postgres_test
 
 import (
 	"database/sql"
-	"fmt"
 	"os"
 
 	_ "github.com/lib/pq"
@@ -10,8 +9,6 @@ import (
 
 func setupDB() (*sql.DB, error) {
 	connStr := os.Getenv("DATABASE_URL")
-
-	fmt.Println(connStr)
 
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
