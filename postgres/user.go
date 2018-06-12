@@ -11,6 +11,7 @@ type UserRepository struct {
 	DB *sql.DB
 }
 
+// FindUser fetches a user by ID and returns it. If the user does not exist it will return easyalert.ErrRecordDoesNotExist.
 func (repo *UserRepository) FindUser(ID uint) (easyalert.User, error) {
 	var user easyalert.User
 
