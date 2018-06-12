@@ -4,6 +4,18 @@ services:
     build: .
     ports:
       - "8000:8000"
+    command: "sh -c 'gom init && gom migrate && make build && ./cmd/easyalert/easyalert'"
+    environment:
+      DATABASE_URL: postgres://easyalert:easyalert@db/easyalert?sslmode=disable
     volumes:
-      - .:/go/src/github.com/bakku
-    command: "sh -c 'make build && ./cmd/easyalert/easyalert'"
+      - ".:/go/src/github.com/bakku/easyalert"
+    links:
+      - db
+  db:
+    image: postgres:10.4
+    environment:
+      POSTGRES_DB: easyalert
+      POSTGRES_USER: easyalert
+      POSTGRES_PASSWORD: easyalert
+    ports:
+      - 5432:5432

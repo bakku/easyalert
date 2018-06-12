@@ -1,0 +1,15 @@
+version: '3'
+services:
+  app:
+    environment:
+      DATABASE_URL: postgres://easyalert:easyalert@db/easyalert_test?sslmode=disable
+    links:
+      - db
+  db:
+    image: postgres:10.4
+    environment:
+      POSTGRES_DB: easyalert_test
+      POSTGRES_USER: easyalert
+      POSTGRES_PASSWORD: easyalert
+    ports:
+      - 5432:5432
