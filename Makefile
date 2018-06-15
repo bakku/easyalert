@@ -1,12 +1,8 @@
-docker:
-	docker build --rm -t easyalert .
-
 build:
 	go build -o cmd/easyalert/easyalert cmd/easyalert/main.go
 
-migrate_test:
-	docker-compose -f docker-compose.yml -f docker-compose.test.yml run app gom init
-	docker-compose -f docker-compose.yml -f docker-compose.test.yml run app gom migrate
+docker:
+	docker build --rm -t easyalert .
 
 test:
-	docker-compose -f docker-compose.yml -f docker-compose.test.yml run app go test ./...
+	docker-compose run app sh -c 'DATABASE_URL=$$DATABASE_TEST_URL && gom init && gom migrate && go test ./...'

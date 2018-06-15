@@ -7,6 +7,8 @@ services:
     command: "sh -c 'gom init && gom migrate && make build && ./cmd/easyalert/easyalert'"
     environment:
       DATABASE_URL: postgres://easyalert:easyalert@db/easyalert?sslmode=disable
+      DATABASE_TEST_URL: postgres://easyalert:easyalert@db/easyalert_test?sslmode=disable      
+      PORT: 8000
     volumes:
       - ".:/go/src/github.com/bakku/easyalert"
     links:
@@ -14,8 +16,11 @@ services:
   db:
     image: postgres:10.4
     environment:
-      POSTGRES_DB: easyalert
       POSTGRES_USER: easyalert
-      POSTGRES_PASSWORD: easyalert
+      POSTGRES_PASSWORD: easyalert      
+      DEV_DB: easyalert_development
+      TEST_DB: easyalert_test
     ports:
       - 5432:5432
+    volumes:
+      - "./docker/create_db.sh:/docker-entrypoint-initdb.d/20-create_db.sh"

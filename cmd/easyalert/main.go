@@ -1,7 +1,20 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+
+	"github.com/bakku/easyalert/web"
+)
 
 func main() {
-	fmt.Println("Hello World")
+	port := os.Getenv("PORT")
+
+	if port == "" {
+		fmt.Println("no PORT env given")
+		return
+	}
+
+	server := web.NewServer(port)
+	server.Start()
 }
