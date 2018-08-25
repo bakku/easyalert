@@ -1,4 +1,7 @@
 version: '3'
+volumes:
+  vendor:
+  cmd:
 services:
   app:
     build: .
@@ -10,6 +13,8 @@ services:
       PORT: 8000
     volumes:
       - ".:/go/src/github.com/bakku/easyalert"
+      - "vendor:/go/src/github.com/bakku/easyalert/vendor"
+      - "cmd:/go/src/github.com/bakku/easyalert/cmd"
     links:
       - db
   db:
