@@ -5,6 +5,8 @@ COPY . .
 
 RUN go get -v github.com/bakku/gom/cmd/gom
 
+RUN dep ensure
+
 RUN make build
 
 CMD [ "cmd/easyalert/easyalert" ]
