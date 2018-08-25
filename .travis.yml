@@ -6,6 +6,9 @@ services:
 before_install:
 - docker-compose pull
 - docker-compose build
+- sudo service postgresql stop
+# wait for postgresql to shutdown
+- while sudo lsof -Pi :5432 -sTCP:LISTEN -t; do sleep 1; done
 - docker-compose up -d db
 - docker-compose run app gom init
 - docker-compose run app gom migrate
