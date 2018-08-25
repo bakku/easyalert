@@ -1,5 +1,5 @@
 # Easyalert
-![Build Status](https://travis-ci.org/bakku/easyalert.svg?branch=master)
+[![Build Status](https://travis-ci.org/bakku/easyalert.svg?branch=master)](https://travis-ci.org/bakku/easyalert)
 
 Easyalert is a small application which enables you to send alerts in a simple and straightforward way. It is suitable especially for scripts where you want to notify yourself in case a certain event or failure occurs.
 
