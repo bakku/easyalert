@@ -77,10 +77,35 @@ func (repo *UserRepository) CreateUser(user easyalert.User) (easyalert.User, err
 	return user, nil
 }
 
+// UpdateUser updates all fields of the user in the Postgres database and returns it with updated_at refreshed.
 func (repo *UserRepository) UpdateUser(user easyalert.User) (easyalert.User, error) {
-	return easyalert.User{}, nil
+	row := repo.DB.QueryRow(`
+			UPDATE users
+			SET email = $1, password_digest = $2,
+				token = $3, admin = $4, updated_at = NOW()
+			WHERE users.id = $5
+			RETURNING updated_at
+		`, user.Email, user.PasswordDigest, user.Token, user.Admin, user.ID)
+
+	err := row.Scan(&user.UpdatedAt)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return easyalert.User{}, easyalert.ErrRecordDoesNotExist
+		}
+
+		return easyalert.User{}, err
+	}
+
+	return user, nil
 }
 
+// DeleteUser deletes a user and returns an error if one occurs.
 func (repo *UserRepository) DeleteUser(user easyalert.User) error {
-	return nil
+	_, err := repo.DB.Exec(`
+			DELETE FROM users
+			WHERE id = $1
+		`, user.ID)
+
+	return err
 }

@@ -130,3 +130,129 @@ func TestCreateUser(t *testing.T) {
 
 	require.True(t, exists)
 }
+
+func TestUpdateUser_Success(t *testing.T) {
+	db, err := setupDB()
+	require.Nil(t, err)
+
+	defer cleanDB(db)
+
+	row := db.QueryRow(`
+		INSERT INTO users(id, email, password_digest,
+			token, admin, created_at, updated_at)
+		VALUES (1, 'test@mail.com', '1234',
+			'1234', TRUE, NOW(), NOW())
+		RETURNING updated_at
+	`)
+
+	var oldUpdatedAt time.Time
+	err = row.Scan(&oldUpdatedAt)
+	require.Nil(t, err)
+
+	user := easyalert.User{}
+	user.ID = 1
+	user.Email = "updated@mail.com"
+	user.PasswordDigest = "5678"
+	user.Token = "5678"
+	user.Admin = false
+
+	repo := postgres.UserRepository{DB: db}
+
+	user, err = repo.UpdateUser(user)
+	require.Nil(t, err)
+
+	require.Equal(t, uint(1), user.ID)
+	require.Equal(t, "updated@mail.com", user.Email)
+	require.Equal(t, "5678", user.PasswordDigest)
+	require.Equal(t, "5678", user.Token)
+	require.False(t, user.Admin)
+	require.NotEqual(t, oldUpdatedAt, user.UpdatedAt)
+
+	var newUser easyalert.User
+
+	row = db.QueryRow(`
+		SELECT id, email, password_digest,
+			token, admin, created_at, updated_at
+		FROM users
+		WHERE id = 1
+	`)
+
+	err = row.Scan(&newUser.ID, &newUser.Email, &newUser.PasswordDigest,
+		&newUser.Token, &newUser.Admin, &newUser.CreatedAt, &newUser.UpdatedAt)
+	require.Nil(t, err)
+
+	require.Equal(t, uint(1), newUser.ID)
+	require.Equal(t, "updated@mail.com", newUser.Email)
+	require.Equal(t, "5678", newUser.PasswordDigest)
+	require.Equal(t, "5678", newUser.Token)
+	require.False(t, newUser.Admin)
+	require.Equal(t, user.UpdatedAt, newUser.UpdatedAt)
+}
+
+func TestUpdateUser_NotExists(t *testing.T) {
+	db, err := setupDB()
+	require.Nil(t, err)
+
+	defer cleanDB(db)
+
+	user := easyalert.User{}
+	user.ID = 1
+	user.Email = "updated@mail.com"
+	user.PasswordDigest = "5678"
+	user.Token = "5678"
+	user.Admin = false
+
+	repo := postgres.UserRepository{DB: db}
+
+	_, err = repo.UpdateUser(user)
+	require.Equal(t, easyalert.ErrRecordDoesNotExist, err)
+}
+
+func TestDeleteUser_Success(t *testing.T) {
+	db, err := setupDB()
+	require.Nil(t, err)
+
+	defer cleanDB(db)
+
+	row := db.QueryRow(`
+		INSERT INTO users(id, email, password_digest,
+			token, admin, created_at, updated_at)
+		VALUES (1, 'test@mail.com', '1234',
+			'1234', TRUE, NOW(), NOW())
+		RETURNING updated_at
+	`)
+
+	user := easyalert.User{}
+	user.ID = 1
+
+	repo := postgres.UserRepository{DB: db}
+
+	err = repo.DeleteUser(user)
+	require.Nil(t, err)
+
+	row = db.QueryRow(`
+		SELECT COUNT(*)
+		FROM users
+	`)
+
+	var count int
+	err = row.Scan(&count)
+	require.Nil(t, err)
+
+	require.Equal(t, 0, count)
+}
+
+func TestDeleteUser_NotExists(t *testing.T) {
+	db, err := setupDB()
+	require.Nil(t, err)
+
+	defer cleanDB(db)
+
+	user := easyalert.User{}
+	user.ID = 1
+
+	repo := postgres.UserRepository{DB: db}
+
+	err = repo.DeleteUser(user)
+	require.Nil(t, err)
+}
