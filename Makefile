@@ -1,8 +1,19 @@
-build:
+go_build:
 	go build -o cmd/easyalert/easyalert cmd/easyalert/main.go
 
-docker:
-	docker build --rm -t easyalert .
+build:
+	docker-compose run app make
+
+init:
+	docker-compose build
+	docker-compose up -d db
+	# find a better solution
+	sleep 5
+	docker-compose run app gom init
+	docker-compose run app gom migrate
+
+migrate:
+	docker-compose run app gom migrate
 
 test:
-	docker-compose run app sh -c 'DATABASE_URL=$$DATABASE_TEST_URL && gom init && gom migrate && go test ./...'
+	docker-compose run app go test ./...

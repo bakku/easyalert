@@ -7,15 +7,16 @@ Easyalert is a small application which enables you to send alerts in a simple an
 
 The easiest way to work on easyalert is by using docker.
 
-1. Run `docker-compose build` to download all necessary images and to build the app image
-2. Run `docker-compose up -d db` to start a database container
-3. Run `docker-compose run app gom init` to initialize the migration table
-4. Run `docker-compose run app gom migrate` to migrate the database
+Run `make init` to initialize you local docker environment. Afterwards you can run `docker-compose up` to start the application.
 
-Now you can run:
+### Compiling
 
-`docker-compose up` to start the application. After changing something you can stop the container, run `docker-compose run app make` and start the container again with `docker-compose up`.
+After code changes you can stop the container and execute `make build` to build the executable in docker. Afterwards you can start the application again using `docker-compose up`.
 
 ### Running tests
 
 You can run tests by executing `docker-compose run app go test ./...`. You should have the database set up as instructed previously.
+
+### Applying migrations
+
+Easyalert is using [gom](https://github.com/bakku/gom) for migrations. To apply the latest migrations locally you can run `make migrate`.
