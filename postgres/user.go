@@ -34,11 +34,33 @@ func (repo *UserRepository) FindUser(ID uint) (easyalert.User, error) {
 	return user, nil
 }
 
+// FindUsers fetches all users and returns them.
 func (repo *UserRepository) FindUsers() ([]easyalert.User, error) {
-	return nil, nil
+	var users []easyalert.User
+
+	rows, err := repo.DB.Query(`
+				SELECT id, email, password_digest, token
+				FROM users
+			`)
+
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var u easyalert.User
+
+		if err := rows.Scan(&u.ID, &u.Email, &u.PasswordDigest, &u.Token); err != nil {
+			return nil, err
+		}
+
+		users = append(users, u)
+	}
+
+	return users, nil
 }
 
-// CreateUser creates a user in the Postgres database and returns it with ID and created_at/updated_at filled
+// CreateUser creates a user in the Postgres database and returns it with ID and created_at/updated_at filled.
 func (repo *UserRepository) CreateUser(user easyalert.User) (easyalert.User, error) {
 	row := repo.DB.QueryRow(`
 			INSERT INTO users(email, password_digest, token, admin, created_at, updated_at)

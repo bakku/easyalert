@@ -14,3 +14,7 @@ The easiest way to work on easyalert is by using docker.
 Now you can run:
 
 `docker-compose up` to start the application. After changing something you can stop the container, run `docker-compose run app make` and start the container again with `docker-compose up`.
+
+### Running tests
+
+You can run tests by executing `docker-compose run app go test ./...`. You should have the database set up as instructed previously.
