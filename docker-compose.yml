@@ -4,7 +4,6 @@ services:
     build: .
     ports:
       - "8000:8000"
-    command: "sh -c 'gom init && gom migrate && make build && ./cmd/easyalert/easyalert'"
     environment:
       DATABASE_URL: postgres://easyalert:easyalert@db/easyalert?sslmode=disable
       DATABASE_TEST_URL: postgres://easyalert:easyalert@db/easyalert_test?sslmode=disable      
