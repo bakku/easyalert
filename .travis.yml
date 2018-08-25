@@ -10,6 +10,8 @@ before_install:
 # wait for postgresql to shutdown
 - while sudo lsof -Pi :5432 -sTCP:LISTEN -t; do sleep 1; done
 - docker-compose up -d db
+# find a better solution
+- sleep 5
 - docker-compose run app gom init
 - docker-compose run app gom migrate
 
