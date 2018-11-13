@@ -1,0 +1,5 @@
+version: '3'
+services:
+  app:
+    environment:
+      DATABASE_URL: postgres://easyalert:easyalert@db/easyalert_test?sslmode=disable

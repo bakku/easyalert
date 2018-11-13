@@ -9,13 +9,17 @@ The easiest way to work on easyalert is by using docker.
 
 Run `make init` to initialize you local docker environment. Afterwards you can run `docker-compose up` to start the application.
 
+In case you make library changes or somehow need to rebuild your environment you can just execute `make reset` and again `make init` and you are back up.
+
+It also makes sense to run `make docker_clean` occasionally  which will delete all containers that were exited.
+
 ### Compiling
 
 After code changes you can stop the container and execute `make build` to build the executable in docker. Afterwards you can start the application again using `docker-compose up`.
 
 ### Running tests
 
-You can run tests by executing `docker-compose run app go test ./...`. You should have the database set up as instructed previously.
+You can run tests by executing `make test`. You should have the database set up as instructed previously.
 
 ### Applying migrations
 

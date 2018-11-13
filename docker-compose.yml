@@ -9,7 +9,6 @@ services:
       - "8000:8000"
     environment:
       DATABASE_URL: postgres://easyalert:easyalert@db/easyalert?sslmode=disable
-      DATABASE_TEST_URL: postgres://easyalert:easyalert@db/easyalert_test?sslmode=disable      
       PORT: 8000
     volumes:
       - ".:/go/src/github.com/bakku/easyalert"
@@ -21,7 +20,7 @@ services:
     image: postgres:10.4
     environment:
       POSTGRES_USER: easyalert
-      POSTGRES_PASSWORD: easyalert      
+      POSTGRES_PASSWORD: easyalert
       DEV_DB: easyalert_development
       TEST_DB: easyalert_test
     ports:
