@@ -47,9 +47,14 @@ func (h CreateUsersHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	user := easyalert.User{
 		Email:          userBody.Email,
-		PasswordDigest: userBody.Password,
 		Token:          token,
 		Admin:          false,
+	}
+
+	err = user.HashPassword(userBody.Password)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "could not hash password")
+		return
 	}
 
 	user, err = h.UserRepo.CreateUser(user)
