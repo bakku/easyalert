@@ -2,6 +2,8 @@ package easyalert
 
 import (
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 // UserRepository wraps all CRUD operations for users
@@ -22,4 +24,19 @@ type User struct {
 	Admin          bool
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
+}
+
+func (u *User) HashPassword(pass string) error {
+	hash, err := bcrypt.GenerateFromPassword([]byte(pass), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+
+	u.PasswordDigest = string(hash)
+
+	return nil
+}
+
+func (u *User) ValidPassword(pass string) bool {
+	return bcrypt.CompareHashAndPassword([]byte(u.PasswordDigest), []byte(pass)) == nil
 }
