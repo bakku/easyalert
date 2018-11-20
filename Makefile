@@ -18,7 +18,7 @@ init:
 reset:
 	docker-compose down
 	docker volume rm easyalert_vendor
-	docker volume rm easyalert_cmd
+	docker volume rm easyalert_build
 
 docker_build:
 	docker-compose build
