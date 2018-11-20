@@ -10,4 +10,4 @@ RUN dep ensure
 
 RUN make go_build
 
-CMD [ "cmd/easyalert/easyalert" ]
+CMD [ "build/easyalert" ]

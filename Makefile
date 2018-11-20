@@ -1,11 +1,10 @@
 go_build:
-	go build -o cmd/easyalert/easyalert cmd/easyalert/main.go
+	go build -o build/easyalert cmd/easyalert/main.go
 
 build:
 	docker-compose run app make
 
 init:
-	docker-compose build
 	docker-compose up -d db
 	# find a better solution
 	sleep 5
@@ -20,6 +19,9 @@ reset:
 	docker-compose down
 	docker volume rm easyalert_vendor
 	docker volume rm easyalert_cmd
+
+docker_build:
+	docker-compose build
 
 docker_clean:
 	docker ps -aq --no-trunc -f status=exited | xargs docker rm

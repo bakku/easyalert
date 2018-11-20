@@ -1,19 +1,19 @@
 version: '3'
 volumes:
   vendor:
-  cmd:
+  build:
 services:
   app:
     build: .
     ports:
       - "8000:8000"
     environment:
-      DATABASE_URL: postgres://easyalert:easyalert@db/easyalert?sslmode=disable
+      DATABASE_URL: postgres://easyalert:easyalert@db/easyalert_development?sslmode=disable
       PORT: 8000
     volumes:
       - ".:/go/src/github.com/bakku/easyalert"
       - "vendor:/go/src/github.com/bakku/easyalert/vendor"
-      - "cmd:/go/src/github.com/bakku/easyalert/cmd"
+      - "build:/go/src/github.com/bakku/easyalert/build"
     links:
       - db
   db:

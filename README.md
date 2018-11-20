@@ -7,9 +7,9 @@ Easyalert is a small application which enables you to send alerts in a simple an
 
 The easiest way to work on easyalert is by using docker.
 
-Run `make init` to initialize you local docker environment. Afterwards you can run `docker-compose up` to start the application.
+First run `make docker_build` to build and pull all the images you need and then run `make init` to initialize you local docker environment. Afterwards you can run `docker-compose up` to start the application.
 
-In case you make library changes or somehow need to rebuild your environment you can just execute `make reset` and again `make init` and you are back up.
+In case you make library changes or somehow need to rebuild your environment you can just execute `make reset` and again `make docker_build` and `make init` and you are back up.
 
 It also makes sense to run `make docker_clean` occasionally  which will delete all containers that were exited.
 
