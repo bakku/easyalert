@@ -8,6 +8,12 @@
   version = "v1.1.0"
 
 [[projects]]
+  name = "github.com/golang/mock"
+  packages = ["gomock"]
+  revision = "c34cdb4725f4c3844d095133c6e40e448b86589b"
+  version = "v1.1.1"
+
+[[projects]]
   name = "github.com/gorilla/context"
   packages = ["."]
   revision = "08b5f424b9271eedf6f9f0ce86cb9396ed337a42"
@@ -37,9 +43,15 @@
   revision = "f35b8ab0b5a2cef36673838d662e249dd9c94686"
   version = "v1.2.2"
 
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/net"
+  packages = ["context"]
+  revision = "10aee181995363b41f712a55844a0dd52ea04646"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "e644f7dacc7dbedd6fe6c23c736e02263bfacb1d0a1bc57a305a1af4635b08f7"
+  inputs-digest = "9b17a9e08f8e0cd40812810419ba6bd991bb046916cfbb866f441dcf59e93bfa"
   solver-name = "gps-cdcl"
   solver-version = 1

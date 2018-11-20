@@ -2,6 +2,7 @@ package web
 
 import (
 	"context"
+	"database/sql"
 	"log"
 	"net/http"
 	"os"
@@ -9,6 +10,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/bakku/easyalert/postgres"
 	"github.com/bakku/easyalert/web/api"
 	"github.com/gorilla/mux"
 )
@@ -19,7 +21,7 @@ type Server struct {
 }
 
 // NewServer returns a new Server with all routes set up
-func NewServer(port string) *Server {
+func NewServer(port string, DB *sql.DB) *Server {
 	s := &Server{
 		server: http.Server{
 			Addr: ":" + port,
@@ -28,10 +30,15 @@ func NewServer(port string) *Server {
 
 	router := mux.NewRouter()
 
+	// repositories
+	userRepo := postgres.UserRepository{DB}
+
 	// api handler
 	home := api.HomeHandler{}
+	createUsers := api.CreateUsersHandler{userRepo}
 
 	router.Methods("GET").Path("/api").Handler(home)
+	router.Methods("POST").Path("/api/users").Handler(createUsers)
 
 	s.server.Handler = router
 

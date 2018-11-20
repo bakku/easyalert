@@ -12,7 +12,7 @@ type UserRepository struct {
 }
 
 // FindUser fetches a user by ID and returns it. If the user does not exist it will return easyalert.ErrRecordDoesNotExist.
-func (repo *UserRepository) FindUser(ID uint) (easyalert.User, error) {
+func (repo UserRepository) FindUser(ID uint) (easyalert.User, error) {
 	var user easyalert.User
 
 	row := repo.DB.QueryRow(`
@@ -35,7 +35,7 @@ func (repo *UserRepository) FindUser(ID uint) (easyalert.User, error) {
 }
 
 // FindUsers fetches all users and returns them.
-func (repo *UserRepository) FindUsers() ([]easyalert.User, error) {
+func (repo UserRepository) FindUsers() ([]easyalert.User, error) {
 	var users []easyalert.User
 
 	rows, err := repo.DB.Query(`
@@ -61,7 +61,7 @@ func (repo *UserRepository) FindUsers() ([]easyalert.User, error) {
 }
 
 // CreateUser creates a user in the Postgres database and returns it with ID and created_at/updated_at filled.
-func (repo *UserRepository) CreateUser(user easyalert.User) (easyalert.User, error) {
+func (repo UserRepository) CreateUser(user easyalert.User) (easyalert.User, error) {
 	row := repo.DB.QueryRow(`
 			INSERT INTO users(email, password_digest, token, admin, created_at, updated_at)
 			VALUES ($1, $2, $3, $4, NOW(), NOW())
@@ -78,7 +78,7 @@ func (repo *UserRepository) CreateUser(user easyalert.User) (easyalert.User, err
 }
 
 // UpdateUser updates all fields of the user in the Postgres database and returns it with updated_at refreshed.
-func (repo *UserRepository) UpdateUser(user easyalert.User) (easyalert.User, error) {
+func (repo UserRepository) UpdateUser(user easyalert.User) (easyalert.User, error) {
 	row := repo.DB.QueryRow(`
 			UPDATE users
 			SET email = $1, password_digest = $2,
@@ -101,7 +101,7 @@ func (repo *UserRepository) UpdateUser(user easyalert.User) (easyalert.User, err
 }
 
 // DeleteUser deletes a user and returns an error if one occurs.
-func (repo *UserRepository) DeleteUser(user easyalert.User) error {
+func (repo UserRepository) DeleteUser(user easyalert.User) error {
 	_, err := repo.DB.Exec(`
 			DELETE FROM users
 			WHERE id = $1
