@@ -7,5 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Hash password before storing user to the database ([@bakku](https://github.com/bakku), [#2](https://github.com/bakku/easyalert/pull/2));
+- Improve validation of user creation endpoint ([@bakku](https://github.com/bakku), [#6](https://github.com/bakku/easyalert/pull/6));
 
 [Unreleased]: https://github.com/bakku/easyalert/compare/b6283ea...HEAD

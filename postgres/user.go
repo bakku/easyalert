@@ -2,8 +2,10 @@ package postgres
 
 import (
 	"database/sql"
+	"errors"
 
 	"github.com/bakku/easyalert"
+	"github.com/lib/pq"
 )
 
 // UserRepository is a postgres implementation of the UserRepository interface
@@ -71,6 +73,12 @@ func (repo UserRepository) CreateUser(user easyalert.User) (easyalert.User, erro
 	err := row.Scan(&user.ID, &user.CreatedAt, &user.UpdatedAt)
 
 	if err != nil {
+		if pqErr, ok := err.(*pq.Error); ok {
+			if pqErr.Constraint == "users_email_key" {
+				return easyalert.User{}, errors.New("Email is already taken.")
+			}
+		}
+
 		return easyalert.User{}, err
 	}
 
@@ -94,7 +102,7 @@ func (repo UserRepository) UpdateUser(user easyalert.User) (easyalert.User, erro
 			return easyalert.User{}, easyalert.ErrRecordDoesNotExist
 		}
 
-		return easyalert.User{}, err
+		return easyalert.User{}, errors.New("User could not be created. Verify that you sent valid data.")
 	}
 
 	return user, nil

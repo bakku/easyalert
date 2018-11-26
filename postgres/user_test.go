@@ -1,6 +1,7 @@
 package postgres_test
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -17,9 +18,9 @@ func TestFindUser_Success(t *testing.T) {
 	defer cleanDB(db)
 
 	_, err = db.Exec(`
-		INSERT INTO users(id, email, password_digest, 
+		INSERT INTO users(id, email, password_digest,
 			token, admin, created_at, updated_at)
-		VALUES (1, 'test@mail.com', '1234', 
+		VALUES (1, 'test@mail.com', '1234',
 			'1234', TRUE, NOW(), NOW())
 	`)
 	require.Nil(t, err)
@@ -73,9 +74,9 @@ func TestFindUsers_UsersExist(t *testing.T) {
 	defer cleanDB(db)
 
 	_, err = db.Exec(`
-		INSERT INTO users(id, email, password_digest, 
+		INSERT INTO users(id, email, password_digest,
 			token, admin, created_at, updated_at)
-		VALUES (1, 'test@mail.com', '1234', 
+		VALUES (1, 'test@mail.com', '1234',
 				'1234', TRUE, NOW(), NOW()),
 				(2, 'test@mail2.com', '1234',
 				'1235', FALSE, NOW(), NOW()),
@@ -104,7 +105,7 @@ func TestFindUsers_UsersExist(t *testing.T) {
 	require.Equal(t, "1235", second.Token)
 }
 
-func TestCreateUser(t *testing.T) {
+func TestCreateUser_Success(t *testing.T) {
 	db, err := setupDB()
 	require.Nil(t, err)
 
@@ -129,6 +130,29 @@ func TestCreateUser(t *testing.T) {
 	require.Nil(t, err)
 
 	require.True(t, exists)
+}
+
+func TestCreateUser_ShouldReturnRecordAlreadyExists(t *testing.T) {
+	db, err := setupDB()
+	require.Nil(t, err)
+
+	defer cleanDB(db)
+
+	_, err = db.Exec(`
+			INSERT INTO users(email, password_digest, token, admin, created_at, updated_at)
+			VALUES ('test@user.com', '1234', '1234', false, NOW(), NOW())
+	`)
+
+	require.Nil(t, err)
+
+	repo := postgres.UserRepository{DB: db}
+
+	user := easyalert.User{Email: "test@user.com", PasswordDigest: "1234", Token: "1234", Admin: false}
+
+	user, err = repo.CreateUser(user)
+	require.NotNil(t, err)
+
+	require.Equal(t, "Email is already taken.", fmt.Sprintf("%v", err))
 }
 
 func TestUpdateUser_Success(t *testing.T) {
