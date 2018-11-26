@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 
@@ -46,9 +47,9 @@ func (h CreateUsersHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user := easyalert.User{
-		Email:          userBody.Email,
-		Token:          token,
-		Admin:          false,
+		Email: userBody.Email,
+		Token: token,
+		Admin: false,
 	}
 
 	err = user.HashPassword(userBody.Password)
@@ -59,7 +60,7 @@ func (h CreateUsersHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	user, err = h.UserRepo.CreateUser(user)
 	if err != nil {
-		writeError(w, http.StatusBadRequest, "User could not be created. Verify that you sent valid data.")
+		writeError(w, http.StatusBadRequest, fmt.Sprintf("%v", err))
 		return
 	}
 

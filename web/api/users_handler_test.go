@@ -29,12 +29,12 @@ func TestPOSTUsers_ShouldReturnErrorIfUserWasGivenIncorrectly(t *testing.T) {
 	require.Equal(t, "{\n  \"error\": \"invalid json\"\n}", rr.Body.String())
 }
 
-func TestPOSTUsers_ShouldReturnErrorIfUserCouldNotBeSaved(t *testing.T) {
+func TestPOSTUsers_ShouldReturnErrorFromDatabase(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
 	userRepo := mocks.NewMockUserRepository(mockCtrl)
-	userRepo.EXPECT().CreateUser(gomock.Any()).Return(easyalert.User{}, errors.New("invalid email"))
+	userRepo.EXPECT().CreateUser(gomock.Any()).Return(easyalert.User{}, errors.New("Email is already taken."))
 
 	payload := `
 		{
@@ -53,7 +53,7 @@ func TestPOSTUsers_ShouldReturnErrorIfUserCouldNotBeSaved(t *testing.T) {
 	handler.ServeHTTP(rr, req)
 
 	require.Equal(t, http.StatusBadRequest, rr.Code)
-	require.Equal(t, "{\n  \"error\": \"User could not be created. Verify that you sent valid data.\"\n}", rr.Body.String())
+	require.Equal(t, "{\n  \"error\": \"Email is already taken.\"\n}", rr.Body.String())
 }
 
 func TestPOSTUsers_ShouldCreateUser(t *testing.T) {
