@@ -40,6 +40,11 @@ func (h CreateUsersHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if userBody.Email == "" || userBody.Password == "" {
+		writeError(w, http.StatusBadRequest, "Empty email or password.")
+		return
+	}
+
 	token, err := random.String(32)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "could not generate token")

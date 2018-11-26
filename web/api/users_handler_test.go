@@ -56,6 +56,32 @@ func TestPOSTUsers_ShouldReturnErrorFromDatabase(t *testing.T) {
 	require.Equal(t, "{\n  \"error\": \"Email is already taken.\"\n}", rr.Body.String())
 }
 
+func TestPOSTUsers_ShouldNotAcceptEmptyEmailOrPassword(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	userRepo := mocks.NewMockUserRepository(mockCtrl)
+
+	payload := `
+		{
+			"email" : "",
+			"password" : ""
+		}
+	`
+
+	req, err := http.NewRequest("POST", "/api/v1/users", strings.NewReader(payload))
+	require.Nil(t, err)
+
+	rr := httptest.NewRecorder()
+	handler := api.CreateUsersHandler{
+		UserRepo: userRepo,
+	}
+	handler.ServeHTTP(rr, req)
+
+	require.Equal(t, http.StatusBadRequest, rr.Code)
+	require.Equal(t, "{\n  \"error\": \"Empty email or password.\"\n}", rr.Body.String())
+}
+
 func TestPOSTUsers_ShouldCreateUser(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
