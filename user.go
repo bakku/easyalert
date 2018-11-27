@@ -6,6 +6,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+const UserTokenLength = 32
+
 // UserRepository wraps all CRUD operations for users
 type UserRepository interface {
 	FindUser(query string, params ...interface{}) (User, error)
