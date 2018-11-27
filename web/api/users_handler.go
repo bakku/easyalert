@@ -45,7 +45,7 @@ func (h CreateUsersHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := random.String(32)
+	token, err := random.String(easyalert.UserTokenLength)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "could not generate token")
 		return

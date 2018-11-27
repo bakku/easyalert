@@ -10,5 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improve validation of user creation endpoint ([@bakku](https://github.com/bakku), [#6](https://github.com/bakku/easyalert/pull/6));
 - Add application/json Content-Type to all API responses ([@bakku](https://github.com/bakku), [#7](https://github.com/bakku/easyalert/pull/7));
 - Add auth endpoint to let a user fetch his token ([@bakku](https://github.com/bakku), [#8](https://github.com/bakku/easyalert/pull/8));
+- Add auth refresh endpoint to let a user refresh his token ([@bakku](https://github.com/bakku), [#12](https://github.com/bakku/easyalert/pull/12));
 
 [Unreleased]: https://github.com/bakku/easyalert/compare/b6283ea...HEAD
