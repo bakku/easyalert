@@ -87,7 +87,6 @@ func TestPOSTAuth_ShouldReturnErrorIfPasswordWasIncorrect(t *testing.T) {
 		Email:          "test@mail.com",
 		PasswordDigest: "12345",
 		Token:          "12345",
-		Admin:          false,
 		CreatedAt:      time.Now(),
 		UpdatedAt:      time.Now(),
 	}
@@ -125,7 +124,6 @@ func TestPOSTAuth_ShouldReturnTokenIfPasswordWasCorrect(t *testing.T) {
 		Email:          "test@mail.com",
 		PasswordDigest: "$2a$10$zWmZyQoDOafIAOX0RJSsHuyY8DLBb3q9TKbNJQDroF1XVCwtIsamC",
 		Token:          "12345",
-		Admin:          false,
 		CreatedAt:      time.Now(),
 		UpdatedAt:      time.Now(),
 	}
@@ -214,7 +212,6 @@ func TestPUTAuthRefresh_ShouldRefreshTheToken(t *testing.T) {
 		Email:          "test@mail.com",
 		PasswordDigest: "$2a$10$zWmZyQoDOafIAOX0RJSsHuyY8DLBb3q9TKbNJQDroF1XVCwtIsamC",
 		Token:          "12345",
-		Admin:          false,
 		CreatedAt:      time.Now(),
 		UpdatedAt:      time.Now(),
 	}
@@ -224,7 +221,6 @@ func TestPUTAuthRefresh_ShouldRefreshTheToken(t *testing.T) {
 		Email:          "test@mail.com",
 		PasswordDigest: "$2a$10$zWmZyQoDOafIAOX0RJSsHuyY8DLBb3q9TKbNJQDroF1XVCwtIsamC",
 		Token:          "67890",
-		Admin:          false,
 		CreatedAt:      time.Now(),
 		UpdatedAt:      time.Now(),
 	}

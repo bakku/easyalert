@@ -19,9 +19,9 @@ func TestFindUser_Success(t *testing.T) {
 
 	_, err = db.Exec(`
 		INSERT INTO users(id, email, password_digest,
-			token, admin, created_at, updated_at)
+			token, created_at, updated_at)
 		VALUES (1, 'test@mail.com', '1234',
-			'1234', TRUE, NOW(), NOW())
+			'1234', NOW(), NOW())
 	`)
 	require.Nil(t, err)
 
@@ -36,7 +36,6 @@ func TestFindUser_Success(t *testing.T) {
 	require.Equal(t, "test@mail.com", user.Email)
 	require.Equal(t, "1234", user.PasswordDigest)
 	require.Equal(t, "1234", user.Token)
-	require.True(t, user.Admin)
 	require.NotEqual(t, defaultTime, user.CreatedAt)
 	require.NotEqual(t, defaultTime, user.UpdatedAt)
 }
@@ -75,13 +74,13 @@ func TestFindUsers_UsersExist(t *testing.T) {
 
 	_, err = db.Exec(`
 		INSERT INTO users(id, email, password_digest,
-			token, admin, created_at, updated_at)
+			token, created_at, updated_at)
 		VALUES (1, 'test@mail.com', '1234',
-				'1234', TRUE, NOW(), NOW()),
+				'1234', NOW(), NOW()),
 				(2, 'test@mail2.com', '1234',
-				'1235', FALSE, NOW(), NOW()),
+				'1235', NOW(), NOW()),
 				(3, 'test@mail3.com', '1234',
-				'1236', FALSE, NOW(), NOW())
+				'1236', NOW(), NOW())
 	`)
 	require.Nil(t, err)
 
@@ -113,7 +112,7 @@ func TestCreateUser_Success(t *testing.T) {
 
 	repo := postgres.UserRepository{DB: db}
 
-	user := easyalert.User{Email: "test@user.com", PasswordDigest: "1234", Token: "1234", Admin: false}
+	user := easyalert.User{Email: "test@user.com", PasswordDigest: "1234", Token: "1234"}
 
 	user, err = repo.CreateUser(user)
 	require.Nil(t, err)
@@ -139,15 +138,15 @@ func TestCreateUser_ShouldReturnRecordAlreadyExists(t *testing.T) {
 	defer cleanDB(db)
 
 	_, err = db.Exec(`
-			INSERT INTO users(email, password_digest, token, admin, created_at, updated_at)
-			VALUES ('test@user.com', '1234', '1234', false, NOW(), NOW())
+			INSERT INTO users(email, password_digest, token, created_at, updated_at)
+			VALUES ('test@user.com', '1234', '1234', NOW(), NOW())
 	`)
 
 	require.Nil(t, err)
 
 	repo := postgres.UserRepository{DB: db}
 
-	user := easyalert.User{Email: "test@user.com", PasswordDigest: "1234", Token: "1234", Admin: false}
+	user := easyalert.User{Email: "test@user.com", PasswordDigest: "1234", Token: "1234"}
 
 	user, err = repo.CreateUser(user)
 	require.NotNil(t, err)
@@ -163,9 +162,9 @@ func TestUpdateUser_Success(t *testing.T) {
 
 	row := db.QueryRow(`
 		INSERT INTO users(id, email, password_digest,
-			token, admin, created_at, updated_at)
+			token, created_at, updated_at)
 		VALUES (1, 'test@mail.com', '1234',
-			'1234', TRUE, NOW(), NOW())
+			'1234', NOW(), NOW())
 		RETURNING updated_at
 	`)
 
@@ -178,7 +177,6 @@ func TestUpdateUser_Success(t *testing.T) {
 	user.Email = "updated@mail.com"
 	user.PasswordDigest = "5678"
 	user.Token = "5678"
-	user.Admin = false
 
 	repo := postgres.UserRepository{DB: db}
 
@@ -189,27 +187,25 @@ func TestUpdateUser_Success(t *testing.T) {
 	require.Equal(t, "updated@mail.com", user.Email)
 	require.Equal(t, "5678", user.PasswordDigest)
 	require.Equal(t, "5678", user.Token)
-	require.False(t, user.Admin)
 	require.NotEqual(t, oldUpdatedAt, user.UpdatedAt)
 
 	var newUser easyalert.User
 
 	row = db.QueryRow(`
 		SELECT id, email, password_digest,
-			token, admin, created_at, updated_at
+			token, created_at, updated_at
 		FROM users
 		WHERE id = 1
 	`)
 
 	err = row.Scan(&newUser.ID, &newUser.Email, &newUser.PasswordDigest,
-		&newUser.Token, &newUser.Admin, &newUser.CreatedAt, &newUser.UpdatedAt)
+		&newUser.Token, &newUser.CreatedAt, &newUser.UpdatedAt)
 	require.Nil(t, err)
 
 	require.Equal(t, uint(1), newUser.ID)
 	require.Equal(t, "updated@mail.com", newUser.Email)
 	require.Equal(t, "5678", newUser.PasswordDigest)
 	require.Equal(t, "5678", newUser.Token)
-	require.False(t, newUser.Admin)
 	require.Equal(t, user.UpdatedAt, newUser.UpdatedAt)
 }
 
@@ -224,7 +220,6 @@ func TestUpdateUser_NotExists(t *testing.T) {
 	user.Email = "updated@mail.com"
 	user.PasswordDigest = "5678"
 	user.Token = "5678"
-	user.Admin = false
 
 	repo := postgres.UserRepository{DB: db}
 
@@ -240,9 +235,9 @@ func TestDeleteUser_Success(t *testing.T) {
 
 	row := db.QueryRow(`
 		INSERT INTO users(id, email, password_digest,
-			token, admin, created_at, updated_at)
+			token, created_at, updated_at)
 		VALUES (1, 'test@mail.com', '1234',
-			'1234', TRUE, NOW(), NOW())
+			'1234', NOW(), NOW())
 		RETURNING updated_at
 	`)
 
