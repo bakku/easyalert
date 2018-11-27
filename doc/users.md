@@ -11,7 +11,5 @@ Users are modelled with the following fields:
 - token:
     - is generated on signup
     - can be used for authentication if user does not want to expose email and password
-- admin:
-    - has access to all data
 - created_at
 - updated_at

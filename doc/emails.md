@@ -2,7 +2,7 @@
 
 Emails are modelled with the following fields:
 
-- name:
+- subject:
     - will be saved inside the database so the user is able to know which mail was sent/not sent
 - status:
     - pending/sent/failure
