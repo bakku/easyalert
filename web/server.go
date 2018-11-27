@@ -36,9 +36,11 @@ func NewServer(port string, DB *sql.DB) *Server {
 	// api handler
 	home := api.HomeHandler{}
 	createUsers := api.CreateUsersHandler{userRepo}
+	auth := api.AuthHandler{userRepo}
 
 	router.Methods("GET").Path("/api").Handler(home)
 	router.Methods("POST").Path("/api/users").Handler(createUsers)
+	router.Methods("POST").Path("/api/auth").Handler(auth)
 
 	s.server.Handler = router
 

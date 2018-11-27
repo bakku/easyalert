@@ -14,14 +14,14 @@ type UserRepository struct {
 }
 
 // FindUser fetches a user by ID and returns it. If the user does not exist it will return easyalert.ErrRecordDoesNotExist.
-func (repo UserRepository) FindUser(ID uint) (easyalert.User, error) {
+func (repo UserRepository) FindUser(query string, params ...interface{}) (easyalert.User, error) {
 	var user easyalert.User
 
-	row := repo.DB.QueryRow(`
-				SELECT id, email, password_digest, token, admin, created_at, updated_at
-				FROM users
-				WHERE id = $1
-			`, ID)
+	baseQuery := `
+		SELECT id, email, password_digest, token, admin, created_at, updated_at
+		FROM users
+	`
+	row := repo.DB.QueryRow(baseQuery+query, params...)
 
 	err := row.Scan(&user.ID, &user.Email, &user.PasswordDigest, &user.Token, &user.Admin, &user.CreatedAt, &user.UpdatedAt)
 
