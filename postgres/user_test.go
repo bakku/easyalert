@@ -27,7 +27,7 @@ func TestFindUser_Success(t *testing.T) {
 
 	repo := postgres.UserRepository{DB: db}
 
-	user, err := repo.FindUser(1)
+	user, err := repo.FindUser("WHERE id = $1", 1)
 	require.Nil(t, err)
 
 	var defaultTime time.Time
@@ -49,7 +49,7 @@ func TestFindUser_NotExists(t *testing.T) {
 
 	repo := postgres.UserRepository{DB: db}
 
-	_, err = repo.FindUser(1)
+	_, err = repo.FindUser("WHERE id = $1", 1)
 
 	require.Equal(t, easyalert.ErrRecordDoesNotExist, err)
 }

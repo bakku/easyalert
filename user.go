@@ -8,7 +8,7 @@ import (
 
 // UserRepository wraps all CRUD operations for users
 type UserRepository interface {
-	FindUser(ID uint) (User, error)
+	FindUser(query string, params ...interface{}) (User, error)
 	FindUsers() ([]User, error)
 	CreateUser(user User) (User, error)
 	UpdateUser(user User) (User, error)

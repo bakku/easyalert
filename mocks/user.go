@@ -34,16 +34,21 @@ func (m *MockUserRepository) EXPECT() *MockUserRepositoryMockRecorder {
 }
 
 // FindUser mocks base method
-func (m *MockUserRepository) FindUser(ID uint) (easyalert.User, error) {
-	ret := m.ctrl.Call(m, "FindUser", ID)
+func (m *MockUserRepository) FindUser(query string, params ...interface{}) (easyalert.User, error) {
+	varargs := []interface{}{query}
+	for _, a := range params {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "FindUser", varargs...)
 	ret0, _ := ret[0].(easyalert.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // FindUser indicates an expected call of FindUser
-func (mr *MockUserRepositoryMockRecorder) FindUser(ID interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindUser", reflect.TypeOf((*MockUserRepository)(nil).FindUser), ID)
+func (mr *MockUserRepositoryMockRecorder) FindUser(query interface{}, params ...interface{}) *gomock.Call {
+	varargs := append([]interface{}{query}, params...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindUser", reflect.TypeOf((*MockUserRepository)(nil).FindUser), varargs...)
 }
 
 // FindUsers mocks base method
