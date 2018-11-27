@@ -18,6 +18,7 @@ func prettifyJSON(in string) (string, error) {
 }
 
 func writeError(w http.ResponseWriter, status int, message string) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(status)
 	body, _ := prettifyJSON("{\"error\":\"" + message + "\"}")
 	w.Write([]byte(body))

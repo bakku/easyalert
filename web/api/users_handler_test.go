@@ -26,6 +26,7 @@ func TestPOSTUsers_ShouldReturnErrorIfUserWasGivenIncorrectly(t *testing.T) {
 	handler.ServeHTTP(rr, req)
 
 	require.Equal(t, http.StatusUnprocessableEntity, rr.Code)
+	require.Equal(t, "application/json; charset=UTF-8", rr.Header().Get("Content-Type"))
 	require.Equal(t, "{\n  \"error\": \"invalid json\"\n}", rr.Body.String())
 }
 
@@ -53,6 +54,7 @@ func TestPOSTUsers_ShouldReturnErrorFromDatabase(t *testing.T) {
 	handler.ServeHTTP(rr, req)
 
 	require.Equal(t, http.StatusBadRequest, rr.Code)
+	require.Equal(t, "application/json; charset=UTF-8", rr.Header().Get("Content-Type"))
 	require.Equal(t, "{\n  \"error\": \"Email is already taken.\"\n}", rr.Body.String())
 }
 
@@ -79,6 +81,7 @@ func TestPOSTUsers_ShouldNotAcceptEmptyEmailOrPassword(t *testing.T) {
 	handler.ServeHTTP(rr, req)
 
 	require.Equal(t, http.StatusBadRequest, rr.Code)
+	require.Equal(t, "application/json; charset=UTF-8", rr.Header().Get("Content-Type"))
 	require.Equal(t, "{\n  \"error\": \"Empty email or password.\"\n}", rr.Body.String())
 }
 
@@ -116,5 +119,6 @@ func TestPOSTUsers_ShouldCreateUser(t *testing.T) {
 	handler.ServeHTTP(rr, req)
 
 	require.Equal(t, http.StatusCreated, rr.Code)
+	require.Equal(t, "application/json; charset=UTF-8", rr.Header().Get("Content-Type"))
 	require.Equal(t, "{\n  \"token\": \"12345\"\n}", rr.Body.String())
 }
