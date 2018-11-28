@@ -18,12 +18,12 @@ func (repo UserRepository) FindUser(query string, params ...interface{}) (easyal
 	var user easyalert.User
 
 	baseQuery := `
-		SELECT id, email, password_digest, token, admin, created_at, updated_at
+		SELECT id, email, password_digest, token, created_at, updated_at
 		FROM users
 	`
 	row := repo.DB.QueryRow(baseQuery+query, params...)
 
-	err := row.Scan(&user.ID, &user.Email, &user.PasswordDigest, &user.Token, &user.Admin, &user.CreatedAt, &user.UpdatedAt)
+	err := row.Scan(&user.ID, &user.Email, &user.PasswordDigest, &user.Token, &user.CreatedAt, &user.UpdatedAt)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -65,10 +65,10 @@ func (repo UserRepository) FindUsers() ([]easyalert.User, error) {
 // CreateUser creates a user in the Postgres database and returns it with ID and created_at/updated_at filled.
 func (repo UserRepository) CreateUser(user easyalert.User) (easyalert.User, error) {
 	row := repo.DB.QueryRow(`
-			INSERT INTO users(email, password_digest, token, admin, created_at, updated_at)
-			VALUES ($1, $2, $3, $4, NOW(), NOW())
+			INSERT INTO users(email, password_digest, token, created_at, updated_at)
+			VALUES ($1, $2, $3, NOW(), NOW())
 			RETURNING id, created_at, updated_at
-		`, user.Email, user.PasswordDigest, user.Token, user.Admin)
+		`, user.Email, user.PasswordDigest, user.Token)
 
 	err := row.Scan(&user.ID, &user.CreatedAt, &user.UpdatedAt)
 
@@ -90,10 +90,10 @@ func (repo UserRepository) UpdateUser(user easyalert.User) (easyalert.User, erro
 	row := repo.DB.QueryRow(`
 			UPDATE users
 			SET email = $1, password_digest = $2,
-				token = $3, admin = $4, updated_at = NOW()
-			WHERE users.id = $5
+				token = $3, updated_at = NOW()
+			WHERE users.id = $4
 			RETURNING updated_at
-		`, user.Email, user.PasswordDigest, user.Token, user.Admin, user.ID)
+		`, user.Email, user.PasswordDigest, user.Token, user.ID)
 
 	err := row.Scan(&user.UpdatedAt)
 

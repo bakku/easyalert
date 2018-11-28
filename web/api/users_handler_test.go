@@ -94,7 +94,6 @@ func TestPOSTUsers_ShouldCreateUser(t *testing.T) {
 		Email:          "test@mail.com",
 		PasswordDigest: "12345",
 		Token:          "12345",
-		Admin:          false,
 		CreatedAt:      time.Now(),
 		UpdatedAt:      time.Now(),
 	}

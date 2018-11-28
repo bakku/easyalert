@@ -23,7 +23,6 @@ type User struct {
 	Email          string
 	PasswordDigest string
 	Token          string
-	Admin          bool
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
 }

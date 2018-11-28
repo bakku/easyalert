@@ -15,5 +15,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Update schema.sql to latest version ([@bakku](https://github.com/bakku), [#13](https://github.com/bakku/easyalert/pull/13));
 - Update documentation to better reflect how to handle subject of emails ([@bakku](https://github.com/bakku), [#15](https://github.com/bakku/easyalert/pull/15));
+- Remove admin flag from code and database ([@bakku](https://github.com/bakku), [#18](https://github.com/bakku/easyalert/pull/18));
 
 [Unreleased]: https://github.com/bakku/easyalert/compare/b6283ea...HEAD
