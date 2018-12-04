@@ -36,11 +36,13 @@ func NewServer(port string, DB *sql.DB) *Server {
 	// api handler
 	home := api.HomeHandler{}
 	createUsers := api.CreateUsersHandler{userRepo}
+	updateUser := api.UpdateUserHandler{userRepo}
 	auth := api.AuthHandler{userRepo}
 	authRefresh := api.AuthRefreshHandler{userRepo}
 
 	router.Methods("GET").Path("/api").Handler(home)
 	router.Methods("POST").Path("/api/users").Handler(createUsers)
+	router.Methods("PUT").Path("/api/users/me").Handler(updateUser)
 
 	router.Methods("POST").Path("/api/auth").Handler(auth)
 	router.Methods("PUT").Path("/api/auth/refresh").Handler(authRefresh)
