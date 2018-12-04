@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add application/json Content-Type to all API responses ([@bakku](https://github.com/bakku), [#7](https://github.com/bakku/easyalert/pull/7));
 - Add auth endpoint to let a user fetch his token ([@bakku](https://github.com/bakku), [#8](https://github.com/bakku/easyalert/pull/8));
 - Add auth refresh endpoint to let a user refresh his token ([@bakku](https://github.com/bakku), [#12](https://github.com/bakku/easyalert/pull/12));
+- Add endpoint to update a user ([@bakku](https://github.com/bakku), [#27](https://github.com/bakku/easyalert/pull/27));
 
 ### Changed
 - Update schema.sql to latest version ([@bakku](https://github.com/bakku), [#13](https://github.com/bakku/easyalert/pull/13));

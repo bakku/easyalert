@@ -86,3 +86,84 @@ func (h CreateUsersHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 	w.Write([]byte(body))
 }
+
+// UpdateUserHandler should accept a JSON object and update the user given by the auth header from it.
+type UpdateUserHandler struct {
+	UserRepo easyalert.UserRepository
+}
+
+type updateUserRequestBody struct {
+	Password string `json:"password"`
+	Email    string `json:"email"`
+}
+
+type updateUserResponseBody struct {
+	Email string `json:"email"`
+	Token string `json:"token"`
+}
+
+// ServeHTTP handles the HTTP request.
+func (h UpdateUserHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	token, ok := getUserToken(r)
+	if !ok {
+		writeError(w, http.StatusUnauthorized, "Missing or invalid Authorization header.")
+		return
+	}
+
+	user, err := h.UserRepo.FindUser("WHERE token = $1", token)
+	if err != nil {
+		if err == easyalert.ErrRecordDoesNotExist {
+			writeError(w, http.StatusUnauthorized, "Invalid token.")
+			return
+		}
+
+		writeError(w, http.StatusInternalServerError, "an unknown error occured")
+		return
+	}
+
+	bytes, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "could not read http body")
+		return
+	}
+
+	var userBody updateUserRequestBody
+
+	err = json.Unmarshal(bytes, &userBody)
+	if err != nil {
+		writeError(w, http.StatusUnprocessableEntity, "invalid json")
+		return
+	}
+
+	if userBody.Email != "" {
+		user.Email = userBody.Email
+	}
+
+	if userBody.Password != "" {
+		user.HashPassword(userBody.Password)
+	}
+
+	user, err = h.UserRepo.UpdateUser(user)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "could not update user")
+		return
+	}
+
+	responseBody := updateUserResponseBody{user.Email, user.Token}
+
+	responseBodyBytes, err := json.Marshal(responseBody)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "could not marshal response body")
+		return
+	}
+
+	body, err := prettifyJSON(string(responseBodyBytes))
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "could not prettify json response")
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(body))
+}
