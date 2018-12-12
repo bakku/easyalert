@@ -1,9 +1,9 @@
-# Emails
+# Alerts
 
-Emails are modelled with the following fields:
+Alerts are modelled with the following fields:
 
 - subject:
-    - will be saved inside the database so the user is able to know which mail was sent/not sent
+    - will be saved inside the database so the user is able to know which alert was sent/not sent
 - status:
     - pending/sent/failure
 - sent_at:
