@@ -1,8 +1,8 @@
 package postgres_test
 
 import (
-	"testing"
 	"database/sql"
+	"testing"
 	"time"
 
 	"github.com/bakku/easyalert"
@@ -224,11 +224,11 @@ func TestUpdateAlert_Success(t *testing.T) {
 	sentAt := time.Now()
 
 	alert := easyalert.Alert{
-		ID: 1,
+		ID:      1,
 		Subject: "Test",
-		Status: 1,
-		SentAt: &sentAt,
-		UserID: 1,
+		Status:  1,
+		SentAt:  &sentAt,
+		UserID:  1,
 	}
 
 	repo := postgres.AlertRepository{DB: db}
@@ -252,11 +252,11 @@ func TestUpdateAlert_NotExists(t *testing.T) {
 	defer cleanDB(db)
 
 	alert := easyalert.Alert{
-		ID: 1,
+		ID:      1,
 		Subject: "Test",
-		Status: 1,
-		SentAt: nil,
-		UserID: 1,
+		Status:  1,
+		SentAt:  nil,
+		UserID:  1,
 	}
 
 	repo := postgres.AlertRepository{DB: db}
