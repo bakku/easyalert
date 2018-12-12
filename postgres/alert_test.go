@@ -273,12 +273,7 @@ func TestDeleteAlert_Success(t *testing.T) {
 
 	createUserWithId(t, db, 1)
 
-	_, err = db.Exec(`
-		INSERT INTO alerts(id, subject, status,
-			sent_at, user_id, created_at, updated_at)
-		VALUES (1, 'Test', 0, NULL, 1, NOW(), NOW())
-	`)
-	require.Nil(t, err)
+	createAlert(t, db, 1, "Test", 0, nil, 1)
 
 	repo := postgres.AlertRepository{DB: db}
 

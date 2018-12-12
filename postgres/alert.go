@@ -2,7 +2,6 @@ package postgres
 
 import (
 	"database/sql"
-	//"errors"
 
 	"github.com/bakku/easyalert"
 )
@@ -104,6 +103,7 @@ func (repo AlertRepository) UpdateAlert(alert easyalert.Alert) (easyalert.Alert,
 	return alert, nil
 }
 
+// DeleteAlert deletes the alert given as a parameter by using the ID.
 func (repo AlertRepository) DeleteAlert(alert easyalert.Alert) error {
 	_, err := repo.DB.Exec(`
 			DELETE FROM alerts
