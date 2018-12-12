@@ -20,7 +20,7 @@ type Alert struct {
 	ID        uint
 	Subject   string
 	Status    uint
-	SentAt    time.Time
+	SentAt    *time.Time
 	UserID    uint
 	CreatedAt time.Time
 	UpdatedAt time.Time
