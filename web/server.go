@@ -32,17 +32,22 @@ func NewServer(port string, DB *sql.DB) *Server {
 
 	// repositories
 	userRepo := postgres.UserRepository{DB}
+	alertRepo := postgres.AlertRepository{DB}
 
 	// api handler
 	home := api.HomeHandler{}
 	createUsers := api.CreateUsersHandler{userRepo}
 	updateUser := api.UpdateUserHandler{userRepo}
+	createAlerts := api.CreateAlertsHandler{userRepo, alertRepo}
 	auth := api.AuthHandler{userRepo}
 	authRefresh := api.AuthRefreshHandler{userRepo}
 
 	router.Methods("GET").Path("/api").Handler(home)
+
 	router.Methods("POST").Path("/api/users").Handler(createUsers)
 	router.Methods("PUT").Path("/api/users/me").Handler(updateUser)
+
+	router.Methods("POST").Path("/api/alerts").Handler(createAlerts)
 
 	router.Methods("POST").Path("/api/auth").Handler(auth)
 	router.Methods("PUT").Path("/api/auth/refresh").Handler(authRefresh)
