@@ -1,7 +1,4 @@
 version: '3'
-volumes:
-  vendor:
-  build:
 services:
   app:
     build: .
@@ -10,13 +7,15 @@ services:
     environment:
       DATABASE_URL: postgres://easyalert:easyalert@db/easyalert_development?sslmode=disable
       PORT: 8000
-      GO111MODULE: 'on'
+      GO111MODULE: "on"
+      RUNNER_ROOT: "/go/src/github.com/bakku/easyalert"
+      RUNNER_TMP_PATH: "/tmp"
     volumes:
+      - "/go/src/github.com/bakku/easyalert/build/"
       - ".:/go/src/github.com/bakku/easyalert"
-      - "vendor:/go/src/github.com/bakku/easyalert/vendor"
-      - "build:/go/src/github.com/bakku/easyalert/build"
     links:
       - db
+    command: air -c /go/src/github.com/bakku/easyalert/cmd/easyalert/air.conf
   db:
     image: postgres:10.4
     environment:
