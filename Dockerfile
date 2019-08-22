@@ -1,13 +1,13 @@
-FROM golang:1.10-stretch
+FROM golang:1.12.9-alpine3.9
 
 WORKDIR /go/src/github.com/bakku/easyalert
+
+RUN apk update && apk upgrade && \
+    apk add --no-cache bash git openssh make build-base && \
+    go get -v github.com/bakku/gom/cmd/gom
+
 COPY . .
 
-RUN go get -v github.com/bakku/gom/cmd/gom
-
-RUN curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-RUN dep ensure
-
-RUN make go_build
+RUN GO111MODULE=on make go_build
 
 CMD [ "build/easyalert" ]

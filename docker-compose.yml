@@ -10,6 +10,7 @@ services:
     environment:
       DATABASE_URL: postgres://easyalert:easyalert@db/easyalert_development?sslmode=disable
       PORT: 8000
+      GO111MODULE: 'on'
     volumes:
       - ".:/go/src/github.com/bakku/easyalert"
       - "vendor:/go/src/github.com/bakku/easyalert/vendor"
