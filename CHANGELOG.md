@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add endpoint to update a user ([@bakku](https://github.com/bakku), [#27](https://github.com/bakku/easyalert/pull/27));
 - Add alerts migrations and CRUD actions ([@bakku](https://github.com/bakku), [#28](https://github.com/bakku/easyalert/pull/28));
 - Add create alert endpoint ([@bakku](https://github.com/bakku), [#29](https://github.com/bakku/easyalert/pull/29));
+- Use air to hot reload code ([@bakku](https://github.com/bakku), [#33](https://github.com/bakku/easyalert/pull/33));
 
 ### Changed
 - Update schema.sql to latest version ([@bakku](https://github.com/bakku), [#13](https://github.com/bakku/easyalert/pull/13));
