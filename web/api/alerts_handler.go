@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"time"
 
 	"github.com/bakku/easyalert"
 )
@@ -70,4 +71,81 @@ func (h CreateAlertsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusCreated)
+}
+
+// GetAlertsHandler should return all alerts of the user.
+type GetAlertsHandler struct {
+	UserRepo  easyalert.UserRepository
+	AlertRepo easyalert.AlertRepository
+}
+
+type getAlertsResponseBody struct {
+	Subject   string `json:"subject"`
+	Status    string `json:"status"`
+	SentAt    string `json:"sent_at,omitempty"`
+	CreatedAt string `json:"created_at"`
+}
+
+// ServeHTTP handles the HTTP request.
+func (h GetAlertsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	token, ok := getUserToken(r)
+	if !ok {
+		writeError(w, http.StatusUnauthorized, "Missing or invalid Authorization header.")
+		return
+	}
+
+	user, err := h.UserRepo.FindUser("WHERE token = $1", token)
+	if err != nil {
+		if err == easyalert.ErrRecordDoesNotExist {
+			writeError(w, http.StatusUnauthorized, "Invalid token.")
+			return
+		}
+
+		writeError(w, http.StatusInternalServerError, "an unknown error occured")
+		return
+	}
+
+	alerts, err := h.AlertRepo.FindAlerts("WHERE user_id = $1", user.ID)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "could not fetch alerts")
+		return
+	}
+
+	responseBody := convertAlertsToResponseBody(alerts)
+
+	responseBodyBytes, err := json.Marshal(responseBody)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "could not marshal response body")
+		return
+	}
+
+	body, err := prettifyJSON(string(responseBodyBytes))
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "could not prettify json response")
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(body))
+}
+
+func convertAlertsToResponseBody(alerts []easyalert.Alert) []getAlertsResponseBody {
+	responseBodyArray := make([]getAlertsResponseBody, len(alerts))
+
+	for i, alert := range alerts {
+		responseAlert := getAlertsResponseBody{
+			Subject:   alert.Subject,
+			Status:    alert.HumanStatus(),
+			CreatedAt: alert.CreatedAt.Format(time.RFC3339),
+		}
+
+		if alert.SentAt != nil {
+			responseAlert.SentAt = alert.SentAt.Format(time.RFC3339)
+		}
+
+		responseBodyArray[i] = responseAlert
+	}
+
+	return responseBodyArray
 }

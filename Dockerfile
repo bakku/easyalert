@@ -1,5 +1,7 @@
 FROM golang:1.12.9-alpine3.9
 
+ENV GO111MODULE=on
+
 WORKDIR /go/src/github.com/bakku/easyalert
 
 RUN apk update && apk upgrade && \
@@ -8,8 +10,13 @@ RUN apk update && apk upgrade && \
     curl -fLo /usr/bin/air https://raw.githubusercontent.com/cosmtrek/air/master/bin/linux/air && \
     chmod +x /usr/bin/air
 
+COPY go.mod .
+COPY go.sum .
+
+RUN go mod download
+
 COPY . .
 
-RUN GO111MODULE=on make go_build
+RUN make go_build
 
 CMD [ "build/easyalert" ]
