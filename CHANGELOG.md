@@ -22,5 +22,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update documentation to better reflect how to handle subject of emails ([@bakku](https://github.com/bakku), [#15](https://github.com/bakku/easyalert/pull/15));
 - Remove admin flag from code and database ([@bakku](https://github.com/bakku), [#18](https://github.com/bakku/easyalert/pull/18));
 - Migrate project to go modules ([@bakku](https://github.com/bakku), [#30](https://github.com/bakku/easyalert/pull/30));
+- Decouple postgres repositories from http server ([@bakku](https://github.com/bakku), [#35](https://github.com/bakku/easyalert/pull/35));
 
 [Unreleased]: https://github.com/bakku/easyalert/compare/b6283ea...HEAD

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/bakku/easyalert/postgres"
 	"github.com/bakku/easyalert/web"
 	_ "github.com/lib/pq"
 )
@@ -34,6 +35,9 @@ func main() {
 		return
 	}
 
-	server := web.NewServer(port, db)
+	userRepo := postgres.UserRepository{db}
+	alertRepo := postgres.AlertRepository{db}
+
+	server := web.NewServer(port, userRepo, alertRepo)
 	server.Start()
 }

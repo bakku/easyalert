@@ -2,7 +2,6 @@ package web
 
 import (
 	"context"
-	"database/sql"
 	"log"
 	"net/http"
 	"os"
@@ -10,7 +9,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/bakku/easyalert/postgres"
+	"github.com/bakku/easyalert"
 	"github.com/bakku/easyalert/web/api"
 	"github.com/gorilla/mux"
 )
@@ -21,7 +20,7 @@ type Server struct {
 }
 
 // NewServer returns a new Server with all routes set up
-func NewServer(port string, DB *sql.DB) *Server {
+func NewServer(port string, userRepo easyalert.UserRepository, alertRepo easyalert.AlertRepository) *Server {
 	s := &Server{
 		server: http.Server{
 			Addr: ":" + port,
@@ -30,15 +29,14 @@ func NewServer(port string, DB *sql.DB) *Server {
 
 	router := mux.NewRouter()
 
-	// repositories
-	userRepo := postgres.UserRepository{DB}
-	alertRepo := postgres.AlertRepository{DB}
-
 	// api handler
 	home := api.HomeHandler{}
 	createUsers := api.CreateUsersHandler{userRepo}
 	updateUser := api.UpdateUserHandler{userRepo}
+
+	getAlerts := api.GetAlertsHandler{userRepo, alertRepo}
 	createAlerts := api.CreateAlertsHandler{userRepo, alertRepo}
+
 	auth := api.AuthHandler{userRepo}
 	authRefresh := api.AuthRefreshHandler{userRepo}
 
@@ -47,6 +45,7 @@ func NewServer(port string, DB *sql.DB) *Server {
 	router.Methods("POST").Path("/api/users").Handler(createUsers)
 	router.Methods("PUT").Path("/api/users/me").Handler(updateUser)
 
+	router.Methods("GET").Path("/api/alerts").Handler(getAlerts)
 	router.Methods("POST").Path("/api/alerts").Handler(createAlerts)
 
 	router.Methods("POST").Path("/api/auth").Handler(auth)
