@@ -167,3 +167,37 @@ func (h UpdateUserHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(body))
 }
+
+// DeleteUserHandler should delete the authorized user.
+type DeleteUserHandler struct {
+	UserRepo easyalert.UserRepository
+}
+
+// ServeHTTP handles the HTTP request.
+func (h DeleteUserHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	token, ok := getUserToken(r)
+	if !ok {
+		writeError(w, http.StatusUnauthorized, "Missing or invalid Authorization header.")
+		return
+	}
+
+	user, err := h.UserRepo.FindUser("WHERE token = $1", token)
+	if err != nil {
+		if err == easyalert.ErrRecordDoesNotExist {
+			writeError(w, http.StatusUnauthorized, "Invalid token.")
+			return
+		}
+
+		writeError(w, http.StatusInternalServerError, "an unknown error occured")
+		return
+	}
+
+	err = h.UserRepo.DeleteUser(user)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "could not delete user")
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+}
