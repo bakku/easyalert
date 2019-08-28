@@ -31,8 +31,10 @@ func NewServer(port string, userRepo easyalert.UserRepository, alertRepo easyale
 
 	// api handler
 	home := api.HomeHandler{}
+
 	createUsers := api.CreateUsersHandler{userRepo}
 	updateUser := api.UpdateUserHandler{userRepo}
+	deleteUser := api.DeleteUserHandler{userRepo}
 
 	getAlerts := api.GetAlertsHandler{userRepo, alertRepo}
 	createAlerts := api.CreateAlertsHandler{userRepo, alertRepo}
@@ -44,6 +46,7 @@ func NewServer(port string, userRepo easyalert.UserRepository, alertRepo easyale
 
 	router.Methods("POST").Path("/api/users").Handler(createUsers)
 	router.Methods("PUT").Path("/api/users/me").Handler(updateUser)
+	router.Methods("DELETE").Path("/api/users/me").Handler(deleteUser)
 
 	router.Methods("GET").Path("/api/alerts").Handler(getAlerts)
 	router.Methods("POST").Path("/api/alerts").Handler(createAlerts)

@@ -242,3 +242,86 @@ func TestPUTUsersMe_ShouldUpdateUser(t *testing.T) {
 	require.Equal(t, "application/json; charset=UTF-8", rr.Header().Get("Content-Type"))
 	require.Equal(t, "{\n  \"email\": \"test@mail.com\",\n  \"token\": \"12345\"\n}", rr.Body.String())
 }
+
+func TestDELETEUsersMe_ShouldReturnUnauthorizedIfAuthorizationHeaderIsNotPresent(t *testing.T) {
+	req, err := http.NewRequest("DELETE", "/api/users/me", nil)
+	require.Nil(t, err)
+
+	rr := httptest.NewRecorder()
+	handler := api.DeleteUserHandler{}
+	handler.ServeHTTP(rr, req)
+
+	require.Equal(t, http.StatusUnauthorized, rr.Code)
+	require.Equal(t, "application/json; charset=UTF-8", rr.Header().Get("Content-Type"))
+	require.Equal(t, "{\n  \"error\": \"Missing or invalid Authorization header.\"\n}", rr.Body.String())
+}
+
+func TestDELETEUsersMe_ShouldReturnUnauthorizedIfNoUserExistsForToken(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	userRepo := mocks.NewMockUserRepository(mockCtrl)
+	userRepo.EXPECT().FindUser(gomock.Any(), gomock.Any()).Return(easyalert.User{}, easyalert.ErrRecordDoesNotExist)
+
+	req, err := http.NewRequest("DELETE", "/api/users/me", nil)
+	require.Nil(t, err)
+
+	req.Header.Set("Authorization", "Bearer 12345")
+
+	rr := httptest.NewRecorder()
+	handler := api.DeleteUserHandler{
+		UserRepo: userRepo,
+	}
+	handler.ServeHTTP(rr, req)
+
+	require.Equal(t, http.StatusUnauthorized, rr.Code)
+	require.Equal(t, "application/json; charset=UTF-8", rr.Header().Get("Content-Type"))
+	require.Equal(t, "{\n  \"error\": \"Invalid token.\"\n}", rr.Body.String())
+}
+
+func TestDELETEUsersMe_ShouldReturnErrorOnUserUpdate(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	userRepo := mocks.NewMockUserRepository(mockCtrl)
+	userRepo.EXPECT().FindUser(gomock.Any(), gomock.Any()).Return(easyalert.User{}, nil)
+	userRepo.EXPECT().DeleteUser(gomock.Any()).Return(errors.New("Error!!"))
+
+	req, err := http.NewRequest("DELETE", "/api/users/me", nil)
+	require.Nil(t, err)
+
+	req.Header.Set("Authorization", "Bearer 12345")
+
+	rr := httptest.NewRecorder()
+	handler := api.DeleteUserHandler{
+		UserRepo: userRepo,
+	}
+	handler.ServeHTTP(rr, req)
+
+	require.Equal(t, http.StatusInternalServerError, rr.Code)
+	require.Equal(t, "application/json; charset=UTF-8", rr.Header().Get("Content-Type"))
+	require.Equal(t, "{\n  \"error\": \"could not delete user\"\n}", rr.Body.String())
+}
+
+func TestDELETEUsersMe_ShouldBeSuccessful(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	userRepo := mocks.NewMockUserRepository(mockCtrl)
+	userRepo.EXPECT().FindUser(gomock.Any(), gomock.Any()).Return(easyalert.User{}, nil)
+	userRepo.EXPECT().DeleteUser(gomock.Any()).Return(nil)
+
+	req, err := http.NewRequest("DELETE", "/api/users/me", nil)
+	require.Nil(t, err)
+
+	req.Header.Set("Authorization", "Bearer 12345")
+
+	rr := httptest.NewRecorder()
+	handler := api.DeleteUserHandler{
+		UserRepo: userRepo,
+	}
+	handler.ServeHTTP(rr, req)
+
+	require.Equal(t, http.StatusOK, rr.Code)
+	require.Equal(t, "application/json; charset=UTF-8", rr.Header().Get("Content-Type"))
+}
